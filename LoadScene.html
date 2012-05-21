@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<style type="text/css">
+		body{
+			height: 100%;
+			width: 100%;
+
+			margin: 0;
+			padding: 0;
+
+			overflow: hidden;
+
+			background: #404040;
+		}
+	</style>
+</head>
+<body>
+	<!-- Import des scripts -->
+	<script src="js/Three.js"></script>
+
+	<script src="js/Tween.js"></script>
+	<script src="js/requestAnimationFrame.js"></script>		
+
+	<script src="js/jquery.js"></script>
+	<script src="js/JSON.js"></script>
+
+	<script src="js/backbone/underscore.js"></script>
+	<script src="js/backbone/backbone.js"></script>
+
+	<script src="js/Detector.js"></script>
+	<script src="js/Stats.js"></script>
+
+	<script src="tools3D/tools3D.js"></script>
+
+	<!-- Import de la scene -->
+
+	<script type="text/javascript">
+		if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+		// variables Global
+		var SCREEN_WIDTH = window.innerWidth
+		var SCREEN_HEIGHT = window.innerHeight
+
+		var container,stats
+
+		var loader, elements
+		var renderer, scene, camera
+
+		//lancement des fonctions
+		init()
+		animate()
+
+		//functions
+		function init(){
+			container = document.createElement('div')
+			document.body.appendChild(container)
+
+			//Créatin du renderer
+			renderer = new THREE.WebGLRenderer()
+			renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT)
+			renderer.domElement.style.position = "relative"
+			container.appendChild(renderer.domElement)
+
+			//Création de Stats
+			stats = new Stats()
+			stats.domElement.style.position = 'absolute'
+			stats.domElement.style.top = '0px'
+			stats.domElement.style.left = '0px'
+			stats.domElement.style.zIndex = 100
+			container.appendChild(stats.domElement)
+
+			//Création de la scene
+			scene = new THREE.Scene()
+
+			//Création de la caméra
+			camera = new THREE.PerspectiveCamera(45, SCREEN_WIDTH/SCREEN_HEIGHT, 1, 10000)
+			camera.position.z = 50
+			scene.add(camera)
+	
+			//Création du loader + import de la scene blender
+			loader = new THREE.SceneLoader()
+			loader.load("scene/sceneCube.js", function(result){
+				elements = result
+
+				//Création de la scene
+				scene = elements.scene
+			})			
+		}
+
+		function animate(){
+			requestAnimationFrame(animate)
+
+			TWEEN.update()
+
+			render()
+			stats.update()
+		}
+
+		function render(){
+			camera.position.x = 20
+			camera.position.y = 8.5
+			camera.position.z = 10
+
+			camera.lookAt(scene.position)
+
+			renderer.render(scene, camera)
+		}
+	</script>
+
+	<script type="text/javascript">
+		tools = new Tools()
+		tools.connect()
+
+		//translations
+		//tools.transZ('Cube1', 'VAR1')
+		//tools.transY('Cube2', 'VAR2')
+		//tools.transX('Cube3', 'VAR1')
+
+		//rotations
+		//tools.rotZ('Cube1', 'VAR2')
+		//tools.rotY('Cube2', 'VAR1')
+		//tools.rotX('Cube3', 'VAR2')
+
+		//échelles
+		tools.scaleZ('Cube1', 'VAR1','top')
+		//tools.scaleY('Cube2', 'VAR2', 'middle')
+		//tools.scaleX('Cube3', 'VAR1', 'middle')
+		
+		//problme dans le subcribeAll, voir console Web
+		tools.subscribeAll()
+	</script>
+</body>
+</html>
