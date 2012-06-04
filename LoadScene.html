@@ -15,6 +15,20 @@
 
 			background: #404040;
 		}
+		#list{
+			height: 100%;
+			width: 17%;
+
+			position: absolute;
+			top: 0px;
+			left: 0px;
+
+			background: #e2e2e2;
+
+			color: #000000;
+
+			overflow = scroll;
+		}
 	</style>
 </head>
 <body>
@@ -27,8 +41,8 @@
 	<script src="js/jquery.js"></script>
 	<script src="js/JSON.js"></script>
 
-	<script src="js/backbone/underscore.js"></script>
-	<script src="js/backbone/backbone.js"></script>
+	<script src="backbone/underscore.js"></script>
+	<script src="backbone/backbone.js"></script>
 
 	<script src="js/Detector.js"></script>
 	<script src="js/Stats.js"></script>
@@ -49,6 +63,12 @@
 		var loader, elements
 		var renderer, scene, camera
 
+		var clock = new THREE.Clock()
+
+		var mouseX = 0, mouseY = 0
+
+		document.addEventListener('mousemove', MouseMove)
+
 		//lancement des fonctions
 		init()
 		animate()
@@ -61,14 +81,14 @@
 			//Créatin du renderer
 			renderer = new THREE.WebGLRenderer()
 			renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT)
-			renderer.domElement.style.position = "relative"
+			//renderer.domElement.style.position = "relative"
 			container.appendChild(renderer.domElement)
 
 			//Création de Stats
 			stats = new Stats()
 			stats.domElement.style.position = 'absolute'
 			stats.domElement.style.top = '0px'
-			stats.domElement.style.left = '0px'
+			stats.domElement.style.right = '0px'
 			stats.domElement.style.zIndex = 100
 			container.appendChild(stats.domElement)
 
@@ -76,61 +96,76 @@
 			scene = new THREE.Scene()
 
 			//Création de la caméra
-			camera = new THREE.PerspectiveCamera(45, SCREEN_WIDTH/SCREEN_HEIGHT, 1, 10000)
-			camera.position.z = 50
+			camera = new THREE.PerspectiveCamera(70, SCREEN_WIDTH/SCREEN_HEIGHT, 1, 10000)
+			//camera.position.x = 5
+			//camera.position.y = 8.5
+			//camera.position.z = 10
 			scene.add(camera)
-	
+
 			//Création du loader + import de la scene blender
 			loader = new THREE.SceneLoader()
+			
 			loader.load("scene/sceneCube.js", function(result){
 				elements = result
 
 				//Création de la scene
-				scene = elements.scene
-			})			
+				scene.add(elements.scene)
+			})
 		}
 
 		function animate(){
 			requestAnimationFrame(animate)
 
 			TWEEN.update()
-
-			render()
 			stats.update()
-		}
 
-		function render(){
-			camera.position.x = 20
-			camera.position.y = 8.5
-			camera.position.z = 10
+			var timer = Date.now() * 0.0005
+
+			// rotation autour de la scene
+			camera.position.x = Math.cos( timer ) * 10
+			//camera.position.y = 5
+			camera.position.z = Math.sin( timer ) * 10
+
+			// mvt par rapport à la souris
+			//camera.position.x = (mouseX-camera.position.x)*0.05
+			camera.position.y = (-0.4*mouseY-camera.position.y)*0.05
+			
 
 			camera.lookAt(scene.position)
-
+						
 			renderer.render(scene, camera)
 		}
+
+		function MouseMove(event){
+			mouseX = ( event.clientX - window.innerHeight/2)
+			mouseY = ( event.clientY - window.innerWidth/2)
+		}
 	</script>
+
+	<div id="list"></div>
 
 	<script type="text/javascript">
 		tools = new Tools()
-		tools.connect()
+		//tools.connect()
 
 		//translations
-		//tools.transZ('Cube1', 'VAR1')
-		//tools.transY('Cube2', 'VAR2')
-		//tools.transX('Cube3', 'VAR1')
+		tools.transZ('Cube1', 'ASI_IN_ANA_1_9_3')
+		//tools.transY('Cube2', 'ASI_IN_ANA_1_9_4')
+		tools.transX('Cube3', 'ASI_IN_ANA_1_9_2')
 
 		//rotations
-		//tools.rotZ('Cube1', 'VAR2')
-		//tools.rotY('Cube2', 'VAR1')
-		//tools.rotX('Cube3', 'VAR2')
+		tools.rotZ('Cube1', 'ASI_IN_ANA_1_9_2')
+		tools.rotY('Cube2', 'ASI_IN_ANA_1_9_3')
+		//tools.rotX('Cube3', 'ASI_IN_ANA_1_9_2')
 
 		//échelles
-		tools.scaleZ('Cube1', 'VAR1','top')
-		//tools.scaleY('Cube2', 'VAR2', 'middle')
-		//tools.scaleX('Cube3', 'VAR1', 'middle')
-		
-		//problme dans le subcribeAll, voir console Web
-		tools.subscribeAll()
+		//tools.scaleZ('Cube1', 'ASI_IN_ANA_1_9_2','middle')
+		tools.scaleY('Cube2', 'ASI_IN_ANA_1_9_4', 'top')
+		//tools.scaleZ('Cube3', 'ASI_IN_ANA_1_9_2', 'top')
+
+		tools.connect()
 	</script>
+
+	
 </body>
 </html>

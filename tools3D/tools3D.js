@@ -20,13 +20,11 @@ function Tools(){
 	// Conection + subscribe Webdis
 	this.connect = function(){
 		if("WebSocket" in window){
-			/*
-			On se connecte au serveur Webdis en local via WebSocket
-			Celui-ci nous envoi les valeurs générer par le collector_dummy
-			*/
 			var ws = new WebSocket('ws://127.0.0.1:7379')
 			console.log(ws)
-			ws.onopen = function(){}
+			ws.onopen = function(){
+				this_3d.subscribeAll()
+			}
 			ws.onmessage = function(evt) {
 				msg = $.JSON.decode(evt.data)
 				data = msg['SUBSCRIBE']
@@ -48,6 +46,7 @@ function Tools(){
 	this.subscribeAll = function(){
 		console.log("subscribe to "+this_3d.subscriptions)
 
+		//this_3d.ws.send(JSON.stringify(['UNSUBSCRIBE']))
 		//this_3d.ws.send(JSON.stringify(['PUNSUBSCRIBE']))
 
 		for(var i=0; i<this_3d.subscriptions.length; i++){
@@ -137,23 +136,28 @@ function Tools(){
 		this_3d.subscriptions.push('var:' + variable)
 
 		this_3d.events.bind('var:'+variable, function(value){
+			var h1 = elements.objects[nom].scale.x
+			var p1 = elements.objects[nom].position.x
+
 			var scale = {x: elements.objects[nom].scale.x}
 			var scaX = new TWEEN.Tween(scale).to({x:value/100},1000).easing(TWEEN.Easing.Elastic.InOut).onUpdate(function(){
+				var h2 = elements.objects[nom].scale.x
+
+				switch(level){
+					case "top":
+						elements.objects[nom].position.x = p1 - (h1-h2)
+						break
+					case "middle":
+						elements.objects[nom].position.x += 0 
+						break
+					case "bottom":
+						elements.objects[nom].position.x = p1 + (h1-h2)
+						break
+				}
+
 				elements.objects[nom].scale.x = scale.x
 			})
 			scaX.start()
-
-			switch(level){
-				case "top":
-					
-					break
-				case "middle":
-					elements.objects[nom].position.x += 0 
-					break
-				case "bottom":
-					
-					break
-			}
 		})
 	}
 
@@ -161,23 +165,28 @@ function Tools(){
 		this_3d.subscriptions.push('var:' + variable)
 
 		this_3d.events.bind('var:'+variable, function(value){
+			var h1 = elements.objects[nom].scale.y
+			var p1 = elements.objects[nom].position.y
+
 			var scale = {y: elements.objects[nom].scale.y}
 			var scaY = new TWEEN.Tween(scale).to({y:value/100},1000).easing(TWEEN.Easing.Elastic.InOut).onUpdate(function(){
+				var h2 = elements.objects[nom].scale.y
+
+				switch(level){
+					case "top":
+						elements.objects[nom].position.y = p1 - (h1-h2)
+						break
+					case "middle":
+						elements.objects[nom].position.y += 0 
+						break
+					case "bottom":
+						elements.objects[nom].position.y = p1 + (h1-h2)
+						break
+				}
+
 				elements.objects[nom].scale.y = scale.y
 			})
 			scaY.start()
-
-			switch(level){
-				case "top":
-					
-					break
-				case "middle":
-					elements.objects[nom].position.x += 0 
-					break
-				case "bottom":
-					
-					break
-			}
 		})
 	}
 
@@ -185,30 +194,22 @@ function Tools(){
 		this_3d.subscriptions.push('var:' + variable)
 
 		this_3d.events.bind('var:'+variable, function(value){
-			
+			var h1 = elements.objects[nom].scale.z
+			var p1 = elements.objects[nom].position.z
+
 			var scale = {z: elements.objects[nom].scale.z}
 			var scaZ = new TWEEN.Tween(scale).to({z:value/100},1000).easing(TWEEN.Easing.Elastic.InOut).onUpdate(function(){
-				var prev = elements.objects[nom].scale.z
+				var h2 = elements.objects[nom].scale.z
 
 				switch(level){
 					case "top":
-						if(prev<scale.z){
-							elements.objects[nom].position.z -= scale.z/2
-						}
-						else{
-							elements.objects[nom].position.z += scale.z/2
-						}
+						elements.objects[nom].position.z = p1 - (h1-h2)
 						break
 					case "middle":
-						elements.objects[nom].position.y += 0 
+						elements.objects[nom].position.z += 0 
 						break
 					case "bottom":
-						if(prev<scale.z){
-							elements.objects[nom].position.z += scale.z/2
-						}
-						else{
-							elements.objects[nom].position.z -= scale.z/2
-						}
+						elements.objects[nom].position.z = p1 + (h1-h2)
 						break
 				}
 
