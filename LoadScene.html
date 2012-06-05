@@ -18,6 +18,7 @@
 		#list{
 			height: 100%;
 			width: 17%;
+			min-width: 200px;
 
 			position: absolute;
 			top: 0px;
@@ -36,13 +37,13 @@
 	<script src="js/Three.js"></script>
 
 	<script src="js/Tween.js"></script>
-	<script src="js/requestAnimationFrame.js"></script>		
+	<script src="js/RequestAnimationFrame.js"></script>		
 
 	<script src="js/jquery.js"></script>
 	<script src="js/JSON.js"></script>
 
-	<script src="backbone/underscore.js"></script>
-	<script src="backbone/backbone.js"></script>
+	<script src="js/backbone/underscore.js"></script>
+	<script src="js/backbone/backbone.js"></script>
 
 	<script src="js/Detector.js"></script>
 	<script src="js/Stats.js"></script>
@@ -62,8 +63,6 @@
 
 		var loader, elements
 		var renderer, scene, camera
-
-		var clock = new THREE.Clock()
 
 		var mouseX = 0, mouseY = 0
 
